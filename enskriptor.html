@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandi Rahasia Pro - Full Features</title>
+    <style>
+        /* Desain Latar Belakang & Font */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            align-items: center;
+        }
+
+        /* Desain Kontainer Utama */
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        /* Desain Tab Menu */
+        .tab-menu {
+            display: flex;
+            background-color: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background-color: inherit;
+            color: #94a3b8;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 20px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .tab-btn:hover {
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #2563eb;
+            border-bottom: 4px solid #2563eb;
+        }
+
+        /* Area Konten */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeEffect 0.4s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #1e293b;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* Group Input & Tombol Aksi */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 5;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            padding-top: 50px; /* Ruang untuk tombol-tombol di atas */
+            box-sizing: border-box;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+            resize: vertical;
+            background-color: #fcfdfe;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea.readonly {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Tombol Aksi (Salin, Tempel, Hapus) */
+        .action-btn {
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-paste { background-color: #e2e8f0; color: #475569; }
+        .btn-paste:hover { background-color: #cbd5e1; }
+
+        .btn-clear { background-color: #fee2e2; color: #991b1b; }
+        .btn-clear:hover { background-color: #fecaca; }
+
+        .btn-copy { background-color: #dcfce7; color: #166534; }
+        .btn-copy:hover { background-color: #bbf7d0; }
+
+        /* Tombol Utama */
+        .btn-main {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-decrypt-main {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-decrypt-main:hover {
+            box-shadow: 0 6px 15px rgba(5, 150, 105, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="bukaTab(event, 'MenuEnkripsi')">🔒 Enkriptor</button>
+            <button class="tab-btn" onclick="bukaTab(event, 'MenuDekripsi')">🔓 Dekriptor</button>
+        </div>
+
+        <div id="MenuEnkripsi" class="tab-content" style="display: block;">
+            <h3>Enkripsi Pesan</h3>
+            <p class="desc">Ubah teks biasa menjadi kode acak rahasia.</p>
+            
+            <div class="input-group">
+                <div class="button-container">
+                    <button class="action-btn btn-paste" onclick="pasteText('teksAsli')">📋 Tempel</button>
+                    <button class="action-btn btn-clear" onclick="clearText('teksAsli')">🗑️ Hapus</button>
+                </div>
+                <textarea id="teksAsli" placeholder="Ketik atau tempel teks di sini..."></textarea>
+            </div>
+            
+            <button class="btn-main" onclick="enkripsi()">Proses Enkripsi ➔</button>
+            
+            <div class="input-group">
+                <div class="button-container">
+                    <button class="action-btn btn-copy" id="btnCopyEnk" onclick="copyText('hasilEnkripsi', 'btnCopyEnk')">💾 Salin Kode</button>
+                    <button class="action-btn btn-clear" onclick="clearText('hasilEnkripsi')">🗑️ Hapus</button>
+                </div>
+                <textarea id="hasilEnkripsi" class="readonly" placeholder="Hasil kode akan muncul di sini..." readonly></textarea>
+            </div>
+        </div>
+
+        <div id="MenuDekripsi" class="tab-content">
+            <h3>Dekripsi Kode</h3>
+            <p class="desc">Terjemahkan kembali kode rahasia menjadi teks asli.</p>
+            
+            <div class="input-group">
+                <div class="button-container">
+                    <button class="action-btn btn-paste" onclick="pasteText('teksSandi')">📋 Tempel</button>
+                    <button class="action-btn btn-clear" onclick="clearText('teksSandi')">🗑️ Hapus</button>
+                </div>
+                <textarea id="teksSandi" placeholder="Tempel kode rahasia di sini..."></textarea>
+            </div>
+            
+            <button class="btn-main btn-decrypt-main" onclick="dekripsi()">Proses Dekripsi ➔</button>
+            
+            <div class="input-group">
+                <div class="button-container">
+                    <button class="action-btn btn-copy" id="btnCopyDek" onclick="copyText('hasilDekripsi', 'btnCopyDek')">💾 Salin Teks</button>
+                    <button class="action-btn btn-clear" onclick="clearText('hasilDekripsi')">🗑️ Hapus</button>
+                </div>
+                <textarea id="hasilDekripsi" class="readonly" placeholder="Hasil terjemahan akan muncul di sini..." readonly></textarea>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fungsi Ganti Tab
+        function bukaTab(evt, namaMenu) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(namaMenu).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Fungsi Enkripsi
+        function enkripsi() {
+            let input = document.getElementById('teksAsli').value;
+            if (!input.trim()) return alert("Ndan, masukkan teksnya dulu!");
+            try {
+                let hasil = btoa(unescape(encodeURIComponent(input)));
+                document.getElementById('hasilEnkripsi').value = hasil;
+            } catch (e) { alert("Terjadi kesalahan enkripsi."); }
+        }
+
+        // Fungsi Dekripsi
+        function dekripsi() {
+            let input = document.getElementById('teksSandi').value;
+            if (!input.trim()) return alert("Ndan, masukkan kodenya dulu!");
+            try {
+                let hasil = decodeURIComponent(escape(atob(input)));
+                document.getElementById('hasilDekripsi').value = hasil;
+            } catch (e) { alert("Kode tidak valid atau terpotong!"); }
+        }
+
+        // Fungsi Hapus Teks (Fitur Baru)
+        function clearText(elementId) {
+            document.getElementById(elementId).value = "";
+        }
+
+        // Fungsi Salin Teks
+        async function copyText(elementId, btnId) {
+            let text = document.getElementById(elementId).value;
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                let btn = document.getElementById(btnId);
+                let oldText = btn.innerText;
+                btn.innerText = "✅ Tersalin!";
+                setTimeout(() => { btn.innerText = oldText; }, 2000);
+            } catch (err) { alert("Gagal menyalin."); }
+        }
+
+        // Fungsi Tempel Teks
+        async function pasteText(elementId) {
+            try {
+                let text = await navigator.clipboard.readText();
+                document.getElementById(elementId).value = text;
+            } catch (err) { alert("Izin akses clipboard ditolak browser."); }
+        }
+    </script>
+</body>
+</html>
+
