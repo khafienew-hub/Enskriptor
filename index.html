@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sandi Rahasia Pro - Full Features</title>
+    <title>Sandi Rahasia Pro - Keamanan Tinggi</title>
     <style>
         /* Desain Latar Belakang & Font */
         body {
@@ -89,7 +89,7 @@
         /* Group Input & Tombol Aksi */
         .input-group {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .button-container {
@@ -103,9 +103,9 @@
 
         textarea {
             width: 100%;
-            height: 150px;
+            height: 140px;
             padding: 15px;
-            padding-top: 50px; /* Ruang untuk tombol-tombol di atas */
+            padding-top: 50px;
             box-sizing: border-box;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
@@ -126,6 +126,25 @@
         textarea.readonly {
             background-color: #f8fafc;
             color: #334155;
+        }
+
+        /* Input Password */
+        .pass-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #fff;
+            transition: all 0.3s;
+        }
+
+        .pass-input:focus {
+            outline: none;
+            border-color: #ef4444; /* Warna merah tanda area rahasia */
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
         }
 
         /* Tombol Aksi (Salin, Tempel, Hapus) */
@@ -194,8 +213,8 @@
         </div>
 
         <div id="MenuEnkripsi" class="tab-content" style="display: block;">
-            <h3>Enkripsi Pesan</h3>
-            <p class="desc">Ubah teks biasa menjadi kode acak rahasia.</p>
+            <h3>Enkripsi Pesan + Password</h3>
+            <p class="desc">Ubah teks biasa menjadi kode rahasia terkunci.</p>
             
             <div class="input-group">
                 <div class="button-container">
@@ -204,6 +223,8 @@
                 </div>
                 <textarea id="teksAsli" placeholder="Ketik atau tempel teks di sini..."></textarea>
             </div>
+            
+            <input type="text" id="passEnkripsi" class="pass-input" placeholder="🔑 Masukkan kata sandi (Contoh: rahasia123)">
             
             <button class="btn-main" onclick="enkripsi()">Proses Enkripsi ➔</button>
             
@@ -217,8 +238,8 @@
         </div>
 
         <div id="MenuDekripsi" class="tab-content">
-            <h3>Dekripsi Kode</h3>
-            <p class="desc">Terjemahkan kembali kode rahasia menjadi teks asli.</p>
+            <h3>Dekripsi Kode + Password</h3>
+            <p class="desc">Masukkan kode dan password yang tepat untuk membaca pesan.</p>
             
             <div class="input-group">
                 <div class="button-container">
@@ -227,8 +248,10 @@
                 </div>
                 <textarea id="teksSandi" placeholder="Tempel kode rahasia di sini..."></textarea>
             </div>
+
+            <input type="text" id="passDekripsi" class="pass-input" placeholder="🔑 Masukkan kata sandi pembuka...">
             
-            <button class="btn-main btn-decrypt-main" onclick="dekripsi()">Proses Dekripsi ➔</button>
+            <button class="btn-main btn-decrypt-main" onclick="dekripsi()">Buka Kunci ➔</button>
             
             <div class="input-group">
                 <div class="button-container">
@@ -257,27 +280,62 @@
             evt.currentTarget.className += " active";
         }
 
-        // Fungsi Enkripsi
+        // Algoritma Pengunci (XOR Cipher)
+        function xorProses(text, key) {
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return result;
+        }
+
+        // Fungsi Enkripsi dengan Password
         function enkripsi() {
             let input = document.getElementById('teksAsli').value;
+            let password = document.getElementById('passEnkripsi').value;
+
             if (!input.trim()) return alert("Ndan, masukkan teksnya dulu!");
+            if (!password.trim()) return alert("Ndan, kata sandinya wajib diisi supaya aman!");
+
             try {
-                let hasil = btoa(unescape(encodeURIComponent(input)));
-                document.getElementById('hasilEnkripsi').value = hasil;
-            } catch (e) { alert("Terjadi kesalahan enkripsi."); }
+                // 1. Amankan karakter spesial dan emoji
+                let tahap1 = encodeURIComponent(input);
+                // 2. Kunci dengan password (XOR)
+                let tahap2 = xorProses(tahap1, password);
+                // 3. Acak menjadi Base64
+                let hasilAkhir = btoa(unescape(encodeURIComponent(tahap2)));
+                
+                document.getElementById('hasilEnkripsi').value = hasilAkhir;
+            } catch (e) { 
+                alert("Terjadi kesalahan sistem saat enkripsi."); 
+            }
         }
 
-        // Fungsi Dekripsi
+        // Fungsi Dekripsi dengan Password
         function dekripsi() {
             let input = document.getElementById('teksSandi').value;
+            let password = document.getElementById('passDekripsi').value;
+
             if (!input.trim()) return alert("Ndan, masukkan kodenya dulu!");
+            if (!password.trim()) return alert("Ndan, kata sandinya wajib diisi untuk membuka kunci!");
+
             try {
-                let hasil = decodeURIComponent(escape(atob(input)));
-                document.getElementById('hasilDekripsi').value = hasil;
-            } catch (e) { alert("Kode tidak valid atau terpotong!"); }
+                // 1. Buka acakan Base64
+                let tahap1 = decodeURIComponent(escape(atob(input)));
+                // 2. Buka kunci dengan password (XOR)
+                let tahap2 = xorProses(tahap1, password);
+                // 3. Kembalikan karakter spesial dan emoji
+                let hasilAkhir = decodeURIComponent(tahap2);
+
+                document.getElementById('hasilDekripsi').value = hasilAkhir;
+            } catch (e) { 
+                // Jika error saat decodeURIComponent, artinya hasil XOR salah (password salah)
+                alert("Gagal menerjemahkan! Pastikan kode dan Kata Sandi benar."); 
+                document.getElementById('hasilDekripsi').value = "";
+            }
         }
 
-        // Fungsi Hapus Teks (Fitur Baru)
+        // Fungsi Hapus Teks
         function clearText(elementId) {
             document.getElementById(elementId).value = "";
         }
@@ -305,4 +363,3 @@
     </script>
 </body>
 </html>
-
